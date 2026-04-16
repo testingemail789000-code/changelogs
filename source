@@ -26,7 +26,7 @@ local corner = Instance.new("UICorner", m)
 corner.CornerRadius = UDim.new(0, 6)
 
 local stroke = Instance.new("UIStroke", m)
-stroke.Color = Color3.fromRGB(170, 170, 170)
+stroke.Color = Color3.fromRGB(120, 120, 120)
 stroke.Thickness = 1
 
 local top = Instance.new("Frame")
@@ -65,7 +65,18 @@ exit.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 exit.TextColor3 = Color3.fromRGB(255,255,255)
 
 exit.MouseButton1Click:Connect(function()
+
+    if _G.BloxBarState then
+        _G.BloxBarState.changelogsOpen = false
+    end
+
+    if dragConn then
+        dragConn:Disconnect()
+        dragConn = nil
+    end
+
     cl:Destroy()
+
 end)
 
 local scroll = Instance.new("ScrollingFrame")
