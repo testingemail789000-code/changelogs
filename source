@@ -1,0 +1,149 @@
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local LP = Players.LocalPlayer
+local PlayerGui = LP:WaitForChild("PlayerGui")
+
+local existing = PlayerGui:FindFirstChild("changelogs")
+if existing then
+    existing:Destroy()
+end
+
+local cl = Instance.new("ScreenGui")
+cl.Name = "changelogs"
+cl.ResetOnSpawn = false
+cl.IgnoreGuiInset = true
+cl.Parent = PlayerGui
+
+local m = Instance.new("Frame")
+m.Parent = cl
+m.Name = "main"
+m.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+m.Size = UDim2.new(0, 460, 0, 270)
+m.Position = UDim2.new(0.5, -230, 0.5, -135)
+m.ClipsDescendants = true
+
+local corner = Instance.new("UICorner", m)
+corner.CornerRadius = UDim.new(0, 6)
+
+local stroke = Instance.new("UIStroke", m)
+stroke.Color = Color3.fromRGB(170, 170, 170)
+stroke.Thickness = 1
+
+local top = Instance.new("Frame")
+top.Parent = m
+top.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+top.Size = UDim2.new(1, 0, 0, 35)
+
+local topCorner = Instance.new("UICorner", top)
+topCorner.CornerRadius = UDim.new(0, 6)
+
+local fix = Instance.new("Frame", top)
+fix.Size = UDim2.new(1, 0, 0, 10)
+fix.Position = UDim2.new(0, 0, 1, -10)
+fix.BackgroundColor3 = top.BackgroundColor3
+fix.BorderSizePixel = 0
+
+local title = Instance.new("TextLabel")
+title.Parent = top
+title.BackgroundTransparency = 1
+title.Position = UDim2.new(0, 10, 0, 0)
+title.Size = UDim2.new(1, -50, 1, 0)
+title.Font = Enum.Font.Montserrat
+title.Text = "Changelogs"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextSize = 18
+title.TextXAlignment = Enum.TextXAlignment.Left
+
+local exit = Instance.new("TextButton")
+exit.Parent = top
+exit.Size = UDim2.new(0, 30, 0, 30)
+exit.Position = UDim2.new(1, -35, 0, 2)
+exit.Text = "X"
+exit.Font = Enum.Font.Ubuntu
+exit.TextSize = 18
+exit.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+exit.TextColor3 = Color3.fromRGB(255,255,255)
+
+exit.MouseButton1Click:Connect(function()
+    cl:Destroy()
+end)
+
+local scroll = Instance.new("ScrollingFrame")
+scroll.Parent = m
+scroll.Position = UDim2.new(0, 10, 0, 45)
+scroll.Size = UDim2.new(1, -20, 1, -55)
+scroll.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+scroll.BorderSizePixel = 0
+scroll.CanvasSize = UDim2.new(0,0,0,0)
+scroll.ScrollBarThickness = 4
+
+local scrollCorner = Instance.new("UICorner", scroll)
+scrollCorner.CornerRadius = UDim.new(0, 6)
+
+local layout = Instance.new("UIListLayout")
+layout.Parent = scroll
+layout.Padding = UDim.new(0, 6)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
+end)
+
+local padding = Instance.new("UIPadding")
+padding.Parent = scroll
+padding.PaddingTop = UDim.new(0, 6)
+padding.PaddingLeft = UDim.new(0, 6)
+
+local changeCount = 0
+
+local function AddChangeLog(text)
+    changeCount += 1
+
+    local lbl = Instance.new("TextLabel")
+    lbl.Parent = scroll
+    lbl.BackgroundTransparency = 1
+    lbl.Size = UDim2.new(1, -10, 0, 24)
+    lbl.Font = Enum.Font.JosefinSans
+    lbl.TextColor3 = Color3.fromRGB(200, 200, 200)
+    lbl.TextXAlignment = Enum.TextXAlignment.Left
+    lbl.TextSize = 16
+    lbl.Text = changeCount .. ". " .. text
+end
+
+--THE FUCKING CHANGELOGS CHANGELOGS CHANGELOGS CHANGELOGS CHANGELOGS CHANGELOGS CHANGELOGS CHANGELOGS CHANGELOGS CHANGELOGS CHANGELOGS CHANGELOGS CHANGELOGS CHANGELOGS CHANGELOGS CHANGELOGS CHANGELOGS CHANGELOGS 
+
+AddChangeLog("Completally Rewritten for better Stability and UI")
+AddChangeLog("Added many new commands")
+AddChangeLog("Added Changelogs")
+AddChangeLog("Scrollable changelog list")
+
+local dragging = false
+local dragStart, startPos
+
+top.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = m.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        m.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+return AddChangeLog
